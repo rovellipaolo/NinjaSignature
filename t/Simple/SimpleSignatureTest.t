@@ -29,7 +29,7 @@ my $sut = SimpleSignature->new(
 ok($sut->name eq $name,           "SimpleSignature name is correct");
 is_deeply($sut->sha256, \@sha256, "SimpleSignature sha256 is correct");
 is_deeply($sut->bytes, \@bytes,   "SimpleSignature bytes is correct");
-ok(!$sut->is_empty(),   "SimpleSignature is_empty is correct");
+ok(!$sut->is_empty(),             "SimpleSignature is_empty is correct");
 ok($sut->dump() eq qq{{
     name: "$name"
     sha256:
@@ -46,6 +46,6 @@ $sut = SimpleSignature->new(
     sha256 => \@empty_sha256,
     bytes  => \@empty_bytes
 );
-ok($sut->is_empty(),   "SimpleSignature is_empty is correct when bytes is empty");
+ok($sut->is_empty(), "SimpleSignature is_empty is correct when bytes is empty");
 
 done_testing();

@@ -31,4 +31,10 @@ dies_ok { BaseGenerator::_open_all_files(@files) } "BaseGenerator fails to open 
 $file_mock->mock('close', sub { die "DIE TEST" });
 dies_ok { BaseGenerator::_close_all_files(@fhs) } "BaseGenerator fails to close all files correctly";
 
+# TEST: append byte to string
+ok(BaseGenerator::_append_byte_to_string("A", undef) eq "41", "BaseGenerator append byte to undefined string correctly");
+ok(BaseGenerator::_append_byte_to_string("A", "") eq "41", "BaseGenerator append byte to empty string correctly");
+ok(BaseGenerator::_append_byte_to_string("B", "41") eq "41 42", "BaseGenerator append byte to non-empty, one byte string correctly");
+ok(BaseGenerator::_append_byte_to_string("C", "41 42") eq "41 42 43", "BaseGenerator append byte to non-empty, two bytes string correctly");
+
 done_testing();

@@ -18,10 +18,14 @@ package File {
 
     sub read($fh, $length = 1) {
         my $bytes = read($fh, my $byte, $length);
-        if (!defined $bytes || $bytes == 0) {
+        if (!defined($bytes) || $bytes == 0) {
             return undef;
         }
         return $byte;
+    }
+
+    sub rewind($fh) {
+        seek($fh, 0, 0);
     }
 
     sub close($fh) {

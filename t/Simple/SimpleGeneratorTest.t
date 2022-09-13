@@ -79,11 +79,11 @@ $signature = $sut->generate($name, @files);
 ok($empty_signature->is_empty(),      "SimpleGenerator signature->is_empty is true when min_string_bytes is bigger than match");
 ok(@{ $empty_signature->bytes } == 0, "SimpleGenerator signature->bytes is empty when min_string_bytes is bigger than match");
 
-# TEST: should_add_string
+# TEST: _should_add_string
 $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
-ok(!$sut->should_add_string(0, 0), "SimpleGenerator should_add_string is false when offset is smaller than min_string_bytes");
-ok($sut->should_add_string($min_string_bytes, 0), "SimpleGenerator should_add_string is true when offset is equal than min_string_bytes");
-ok($sut->should_add_string($min_string_bytes + 1, 0), "SimpleGenerator should_add_string is true when offset is greater than min_string_bytes");
+ok(!$sut->_should_add_string(0, 0),                    "SimpleGenerator _should_add_string is false when offset is smaller than min_string_bytes");
+ok($sut->_should_add_string($min_string_bytes, 0),     "SimpleGenerator _should_add_string is true when offset is equal to min_string_bytes");
+ok($sut->_should_add_string($min_string_bytes + 1, 0), "SimpleGenerator _should_add_string is true when offset is greater than min_string_bytes");
 
 done_testing();
 

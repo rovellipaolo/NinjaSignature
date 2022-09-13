@@ -30,6 +30,15 @@ package BaseGenerator {
             File::close($fh);
         }
     }
+
+    sub _append_byte_to_string($byte, $string) {
+        if (defined($string) && length $string > 0) {
+            return $string . " " . sprintf("%02X", ord $byte);
+        }
+        else {
+            return sprintf("%02X", ord $byte);
+        }
+    }
 }
 
 

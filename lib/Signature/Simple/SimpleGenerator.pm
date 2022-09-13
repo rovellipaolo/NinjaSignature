@@ -25,11 +25,11 @@ package SimpleGenerator {
     );
 
     sub generate($self, $name, @files) {
-        my @hashes = $self->generate_sha256_hashes(@files);
+        my @hashes = $self->_generate_sha256_hashes(@files);
 
-        my @fhs = _open_all_files(@files);
-        my @bytes = $self->generate_byte_sequences(@fhs);
-        _close_all_files(@fhs);
+        my @fhs = BaseGenerator::_open_all_files(@files);
+        my @bytes = $self->_generate_byte_sequences(@fhs);
+        BaseGenerator::_close_all_files(@fhs);
 
         return SimpleSignature->new(
             name   => $name,
@@ -40,11 +40,11 @@ package SimpleGenerator {
 
     with 'BaseGenerator';
 
-    sub should_add_string($self, $current_offset, $string_offset) {
+    sub _should_add_string($self, $current_offset, $string_offset) {
         return $current_offset - $string_offset >= $self->min_string_bytes;
     }
 
-    sub generate_sha256_hashes($self, @files) {
+    sub _generate_sha256_hashes($self, @files) {
         my @hashes = ();
 
         for my $file (@files) {
@@ -55,7 +55,7 @@ package SimpleGenerator {
     }
 
     # Algorithm: same bytes, same offsets.
-    sub generate_byte_sequences($self, @fhs) {
+    sub _generate_byte_sequences($self, @fhs) {
         my @strings = ();
 
         my $current_offset = 0;
@@ -66,8 +66,8 @@ package SimpleGenerator {
             my $last_byte;
             for my $i (0 .. @fhs - 1) {
                 my $current_byte = File::read($fhs[$i]);
-                if (!defined $current_byte) {
-                    if ($self->should_add_string($current_offset, $string_offset)) {
+                if (!defined($current_byte)) {
+                    if ($self->_should_add_string($current_offset, $string_offset)) {
                         push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
                     }
                     $has_bytes = 1;
@@ -79,15 +79,10 @@ package SimpleGenerator {
                 }
                 else {
                     if ($current_byte eq $last_byte) {
-                        if (length $string > 0) {
-                            $string .= " " . sprintf("%02X", ord $current_byte);
-                        }
-                        else {
-                            $string = sprintf("%02X", ord $current_byte);
-                        }
+                        $string = BaseGenerator::_append_byte_to_string($current_byte, $string);
                     }
                     else {
-                        if ($self->should_add_string($current_offset, $string_offset)) {
+                        if ($self->_should_add_string($current_offset, $string_offset)) {
                             push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
                         }
                         $string = "";

@@ -9,7 +9,7 @@ NinjaSignature is a simple signature generator tool for malware.
 
 NinjaSignature automatically generates simple signatures that matches multiple files.
 
-**NOTE:** This is more a playground to play with Perl than anything serious.
+**NOTE: This is more a playground to play with Perl than anything serious.**
 
 There are currently two supported types of signature: a (custom) simple string one and a YARA one.
 Please note that not all YARA conditions are currently supported, and they will probably never be (e.g. wild-cards, jumps of variable content and lengths, fragment alternatives and many more).
@@ -31,6 +31,7 @@ Just launch the following commands, which will install all the needed Perl depen
 ```
 $ make build-dev
 $ make install
+$ ninjasignature --help
 ```
 
 

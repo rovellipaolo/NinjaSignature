@@ -73,21 +73,27 @@ package SimpleGenerator {
                     $has_bytes = 1;
                     last;
                 }
+
+                # First file:
                 if ($i == 0) {
                     $current_offset += 1;
                     $last_byte = $current_byte;
+                    next;
                 }
-                else {
-                    if ($current_byte eq $last_byte) {
-                        $string = BaseGenerator::_append_byte_to_string($current_byte, $string);
+
+                if ($current_byte ne $last_byte) {
+                    if ($self->_should_add_string($current_offset, $string_offset)) {
+                        push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
                     }
-                    else {
-                        if ($self->_should_add_string($current_offset, $string_offset)) {
-                            push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
-                        }
-                        $string = "";
-                        $string_offset = $current_offset;
-                    }
+                    $string = "";
+                    $string_offset = $current_offset;
+                    BaseGenerator::_seek_all_files($current_offset, @fhs);
+                    last;
+                }
+
+                # Last file:
+                if ($i == @fhs - 1) {
+                    $string = BaseGenerator::_append_byte_to_string($current_byte, $string);
                 }
             }
         }

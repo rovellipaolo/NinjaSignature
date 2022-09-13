@@ -24,8 +24,12 @@ package File {
         return $byte;
     }
 
+    sub seek($fh, $position) {
+        seek($fh, $position, 0);
+    }
+
     sub rewind($fh) {
-        seek($fh, 0, 0);
+        File::seek($fh, 0);
     }
 
     sub close($fh) {

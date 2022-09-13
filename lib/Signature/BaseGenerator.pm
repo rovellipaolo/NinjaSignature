@@ -25,6 +25,12 @@ package BaseGenerator {
         return @fhs;
     }
 
+    sub _seek_all_files($position, @fhs) {
+        for my $fh (@fhs) {
+            File::seek($fh, $position);
+        }
+    }
+
     sub _close_all_files(@fhs) {
         for my $fh (@fhs) {
             File::close($fh);

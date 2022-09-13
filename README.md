@@ -66,7 +66,7 @@ $ make test-coverage
 
 The following are examples of running NinjaSignature against sample files.
 
-### Generate a (custom) simple string signature
+### Generate a (custom) simple string signature from two files
 ```
 $ ninjasignature --type simple --name TestSignature --files ./t/data/sample1 ./t/data/sample2
 ```
@@ -74,16 +74,34 @@ $ ninjasignature --type simple --name TestSignature --files ./t/data/sample1 ./t
 {
     name: "TestSignature"
     sha256:
-        - 266cdd168de3e6363ac76059905c1608ce126e6c7f8e4a1fcc7389f9d7f9f897
-        - 91638dbf219262900aea9b13dbe9b0528b7d8056f16ba1d52d2a38b60cb7c90a
+        - 3a878ce59dce8bb4a73d5548ce923131816b33edb928099f049fc557c056eccc
+        - 2087bd049dd4cdd71fe3fe78235cf5cd89908f0cb349633e90b7c4481e07e875
     bytes:
         0: 41 41 42 42
         22: 41 41 42 42 43 43 44 44 45 45 46 46
-        42: 30 30 46 46 0A
+        42: 30 30 3F 3F 21 21
 }
 ```
 
-### Generate a YARA signature
+### Generate a (custom) simple string signature from multiple files
+```
+$ ninjasignature --type simple --name TestSignature --files ./t/data/sample1 ./t/data/sample2 ./t/data/sample3
+```
+```
+{
+    name: "TestSignature"
+    sha256:
+        - 3a878ce59dce8bb4a73d5548ce923131816b33edb928099f049fc557c056eccc
+        - 2087bd049dd4cdd71fe3fe78235cf5cd89908f0cb349633e90b7c4481e07e875
+        - 6b6b205afa5ab6c1e24852a6afb49a53b795c11d4e7081a31be5b6a069195bd5
+    bytes:
+        0: 41 41 42 42
+        22: 41 41 42 42 43 43 44 44 45 45
+        42: 30 30 3F 3F
+}
+```
+
+### Generate a YARA signature from two files
 ```
 $ ninjasignature --type yara --name TestSignature --files ./t/data/sample1 ./t/data/sample2
 ```
@@ -93,7 +111,7 @@ rule TestSignature
     strings:
         $s0 = {41 41 42 42}
         $s1 = {43 43 44 44 45 45 46 46}
-        $s2 = {30 30 46 46}
+        $s2 = {30 30 3F 3F 21 21}
 
     condition:
         $s0 and $s1 and $s2

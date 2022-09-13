@@ -45,8 +45,11 @@ sub main {
         print_help($name, $type);
         return 0;
     }
-    if ( @files != 2 ) {
-        die "Can compare only two files at a time!";
+    if ( @files < 2 ) {
+        die "Must compare at least two files!";
+    }
+    if ( $type eq GeneratorFactory::YARA && @files != 2 ) {
+        die "Can compare only two files at a time when using 'GeneratorFactory::YARA' type!";
     }
 
     my $signature = GeneratorFactory::build($type)->generate($name, @files);

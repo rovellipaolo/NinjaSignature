@@ -36,9 +36,11 @@ $sha_mock->mock('hexdigest', sub {
     my $hexdigest;
     if ($hexdigest_calls == 0) {
         $hexdigest = "AAA000";
-    } elsif ($hexdigest_calls == 1) {
+    }
+    elsif ($hexdigest_calls == 1) {
         $hexdigest = "BBB111";
-    } else {
+    }
+    else {
         $hexdigest = undef;
     }
     $hexdigest_calls++;
@@ -67,15 +69,21 @@ is_deeply($signature->bytes, \@expected_bytes,   "SimpleGenerator signature->byt
 $file_mock->mock('read', sub { return undef; });
 $sha_mock->mock('hexdigest', sub { return "" });
 my $empty_signature = $sut->generate($name, @files);
-ok($empty_signature->is_empty(), "SimpleGenerator signature->is_empty is true when file is empty");
+ok($empty_signature->is_empty(),      "SimpleGenerator signature->is_empty is true when file is empty");
 ok(@{ $empty_signature->bytes } == 0, "SimpleGenerator signature->bytes is empty when file is empty");
 
 # TEST: match smaller than min_string_bytes
 my $big_min_string_bytes = 8;
 $sut = SimpleGenerator->new(min_string_bytes => $big_min_string_bytes);
 $signature = $sut->generate($name, @files);
-ok($empty_signature->is_empty(), "SimpleGenerator signature->is_empty is true when min_string_bytes is bigger than match");
+ok($empty_signature->is_empty(),      "SimpleGenerator signature->is_empty is true when min_string_bytes is bigger than match");
 ok(@{ $empty_signature->bytes } == 0, "SimpleGenerator signature->bytes is empty when min_string_bytes is bigger than match");
+
+# TEST: should_add_string
+$sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
+ok(!$sut->should_add_string(0, 0), "SimpleGenerator should_add_string is false when offset is smaller than min_string_bytes");
+ok($sut->should_add_string($min_string_bytes, 0), "SimpleGenerator should_add_string is true when offset is equal than min_string_bytes");
+ok($sut->should_add_string($min_string_bytes + 1, 0), "SimpleGenerator should_add_string is true when offset is greater than min_string_bytes");
 
 done_testing();
 

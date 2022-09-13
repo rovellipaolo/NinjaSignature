@@ -17,8 +17,8 @@ sub main {
         "files=s{2,}" => \@files
     );
 
-    if (@files < 2) {
-        die "Must compare at least two files at a time!";
+    if ( @files != 2 ) {
+        die "Can compare only two files at a time!";
     }
 
     my $signature = SimpleGenerator->new(min_string_bytes => 4)->generate($name, @files);

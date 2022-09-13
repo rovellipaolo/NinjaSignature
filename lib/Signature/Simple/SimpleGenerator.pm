@@ -40,7 +40,7 @@ package SimpleGenerator {
 
     with 'BaseGenerator';
 
-    sub should_add_signature($self, $current_offset, $string_offset) {
+    sub should_add_string($self, $current_offset, $string_offset) {
         return $current_offset - $string_offset >= $self->min_string_bytes;
     }
 
@@ -56,7 +56,7 @@ package SimpleGenerator {
 
     # Algorithm: same bytes, same offsets.
     sub generate_byte_sequences($self, @fhs) {
-        my @bytes = ();
+        my @strings = ();
 
         my $current_offset = 0;
         my $has_bytes = 0;
@@ -67,8 +67,8 @@ package SimpleGenerator {
             for my $i (0 .. @fhs - 1) {
                 my $current_byte = File::read($fhs[$i]);
                 if (!defined $current_byte) {
-                    if ($self->should_add_signature($current_offset, $string_offset)) {
-                        push(@bytes, ByteSequence->new(offset => $string_offset, value => $string));
+                    if ($self->should_add_string($current_offset, $string_offset)) {
+                        push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
                     }
                     $has_bytes = 1;
                     last;
@@ -76,7 +76,8 @@ package SimpleGenerator {
                 if ($i == 0) {
                     $current_offset += 1;
                     $last_byte = $current_byte;
-                } else {
+                }
+                else {
                     if ($current_byte eq $last_byte) {
                         if (length $string > 0) {
                             $string .= " " . sprintf("%02X", ord $current_byte);
@@ -84,9 +85,10 @@ package SimpleGenerator {
                         else {
                             $string = sprintf("%02X", ord $current_byte);
                         }
-                    } else {
-                        if ($self->should_add_signature($current_offset, $string_offset)) {
-                            push(@bytes, ByteSequence->new(offset => $string_offset, value => $string));
+                    }
+                    else {
+                        if ($self->should_add_string($current_offset, $string_offset)) {
+                            push(@strings, ByteSequence->new(offset => $string_offset, value => $string));
                         }
                         $string = "";
                         $string_offset = $current_offset;
@@ -95,7 +97,7 @@ package SimpleGenerator {
             }
         }
 
-        return @bytes;
+        return @strings;
     }
 }
 

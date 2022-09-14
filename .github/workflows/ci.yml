@@ -1,0 +1,35 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: "5.30"
+      - name: Install
+        run: |
+          make build-dev
+          cpan Devel::Cover::Report::Coveralls
+      - name: Checkstyle
+        run: |
+          make checkstyle
+      - name: Tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cover -test -report coveralls

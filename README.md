@@ -3,6 +3,10 @@ NinjaSignature
 
 NinjaSignature is a simple signature generator tool for malware.
 
+[![Build Status: GitHub Actions](https://github.com/rovellipaolo/NinjaSignature/actions/workflows/ci.yml/badge.svg)](https://github.com/rovellipaolo/NinjaSignature/actions)
+[![Test Coverage: Coveralls](https://coveralls.io/repos/github/rovellipaolo/NinjaSignature/badge.svg)](https://coveralls.io/github/rovellipaolo/NinjaSignature)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 
 
 ## Overview

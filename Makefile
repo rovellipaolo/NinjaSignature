@@ -41,4 +41,4 @@ test-coverage:
 
 .PHONY: checkstyle
 checkstyle:
-	perltidy -w -b -bext='/' *.pl
+	perltidy -w -b -bext='/' *.pl lib/*/*.pm lib/*/*/*.pm t/*.t

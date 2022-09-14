@@ -9,8 +9,9 @@ use Getopt::Long;
 use lib './lib';
 use Signature::GeneratorFactory;
 
-sub print_help($name, $type) {
-    say(qq{usage: ninjasignature.pl [-h] [-t TYPE] [-n NAME] -f FILE1 -f FILE2 [-f FILEX]
+sub print_help ( $name, $type ) {
+    say(
+qq{usage: ninjasignature.pl [-h] [-t TYPE] [-n NAME] -f FILE1 -f FILE2 [-f FILEX]
 
 examples:
   >> ninjasignature.pl --files ./t/data/sample1 ./t/data/sample2
@@ -21,12 +22,13 @@ examples:
 optional arguments:
   -h, --help     show this help message and exit
   -t, --type     set the type of signature between '@{[GeneratorFactory::SIMPLE]}' and '@{[GeneratorFactory::YARA]}' (default: '$type')
-  -n, --name     set the signature name (default: '$name')});
+  -n, --name     set the signature name (default: '$name')}
+    );
 }
 
 sub main {
     my $help;
-    my $type = GeneratorFactory::SIMPLE;
+    my $type  = GeneratorFactory::SIMPLE;
     my $name  = "Generic";
     my @files = ();
 
@@ -41,15 +43,15 @@ sub main {
         "file=s"      => \@files,
         "files=s{2,}" => \@files
     );
-    if (defined($help)) {
-        print_help($name, $type);
+    if ( defined($help) ) {
+        print_help( $name, $type );
         return 0;
     }
     if ( @files < 2 ) {
         die "Must compare at least two files!";
     }
 
-    my $signature = GeneratorFactory::build($type)->generate($name, @files);
+    my $signature = GeneratorFactory::build($type)->generate( $name, @files );
     if ( $signature->is_empty() ) {
         say("No signature could be generated!");
     }

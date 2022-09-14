@@ -6,38 +6,38 @@ no warnings 'experimental::signatures';
 use Signature::BaseSignature;
 use Signature::Simple::ByteSequence;
 
-
 =pod
 =head1 Signature::Simple::SimpleSignature
 Represents a simple string signature.
 The output JSON format is invented for example purposes.
 =cut
+
 package SimpleSignature {
     use Moose;
 
     extends 'BaseSignature';
 
     has 'sha256' => (
-        is      => 'ro',
-        isa     => 'ArrayRef',
+        is  => 'ro',
+        isa => 'ArrayRef',
     );
 
     has 'bytes' => (
-        is      => 'ro',
-        isa     => 'ArrayRef',
+        is  => 'ro',
+        isa => 'ArrayRef',
     );
 
     override is_empty => sub {
-        my $self = shift;
+        my $self  = shift;
         my @bytes = @{ $self->bytes };
 
         return @bytes == 0;
     };
 
     override dump => sub {
-        my $self = shift;
+        my $self   = shift;
         my @sha256 = @{ $self->sha256 };
-        my @bytes = @{ $self->bytes };
+        my @bytes  = @{ $self->bytes };
 
         return qq{{
     name: "@{[$self->name]}"
@@ -48,6 +48,5 @@ package SimpleSignature {
 }};
     };
 }
-
 
 1;

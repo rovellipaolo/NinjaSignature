@@ -21,6 +21,11 @@ package YaraGenerator {
         default => 4,
     );
 
+    ##
+    # Preconditions:
+    #  - $name is always defined
+    #  - @files always contain 2 or more files
+    #
     sub generate($self, $name, @files) {
         my @fhs = BaseGenerator::_open_all_files(@files);
         my @strings = $self->_generate_byte_sequences(@fhs);
@@ -35,44 +40,52 @@ package YaraGenerator {
     with 'BaseGenerator';
 
     sub _should_add_string($self, $string, @strings) {
-        return defined($string) &&
-            length($string) >= $self->min_string_bytes * 2 + ($self->min_string_bytes - 1) &&
+        return length($string) >= $self->min_string_bytes * 2 + ($self->min_string_bytes - 1) &&
             grep(/$string/, @strings) == 0
     }
 
+    ##
     # Algorithm: same bytes, different offsets.
+    #
     sub _generate_byte_sequences($self, @fhs) {
         my @strings = ();
 
         my $string = "";
-        my $match = File::read($fhs[0]);
-        while (defined($match)) {
-            my $current = File::read($fhs[1]);
-            while (defined($current)) {
-                if ($current eq $match) {
-                    $string = BaseGenerator::_append_byte_to_string($current, $string);
+        my $match;
+        while (defined($match = File::read($fhs[0]))) {
+            for my $i (1 .. @fhs - 1) {
+                my $current;
+                while (defined($current = File::read($fhs[$i]))) {
+                    if ($current eq $match) {
+                        if (BaseGenerator::_is_last_file($i, @fhs)) {
+                            $string = BaseGenerator::_append_byte_to_string($current, $string);
+                        }
+                        last;
+                    }
+
+                    if (length($string) > 0) {
+                        if ($self->_should_add_string($string, @strings)) {
+                            push(@strings, $string);
+                        }
+                        BaseGenerator::_rewind_all_files(@fhs[1, @fhs - 1]);
+                        $string = "";
+                    }
+                }
+
+                if (!defined($current)) {
+                    if (length($string) > 0 && $self->_should_add_string($string, @strings)) {
+                        push(@strings, $string);
+                    }
+                    BaseGenerator::_rewind_all_files(@fhs[1, @fhs - 1]);
+                    $string = "";
                     last;
                 }
-                else {
-                    if ($self->_should_add_string($string, @strings)) {
-                        push(@strings, $string);
-                        File::rewind($fhs[1]);
-                    }
-                    $string = "";
-                }
-                $current = File::read($fhs[1]);
             }
-            $match = File::read($fhs[0]);
-            if (!defined($match)) {
-                if ($self->_should_add_string($string, @strings)) {
-                    push(@strings, $string);
-                }
-            }
-            elsif (!defined($current)) {
-                if ($self->_should_add_string($string, @strings)) {
-                    push(@strings, $string);
-                }
-                File::rewind($fhs[1]);
+        }
+
+        if (!defined($match)) {
+            if ($self->_should_add_string($string, @strings)) {
+                push(@strings, $string);
             }
         }
 

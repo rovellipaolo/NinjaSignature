@@ -31,10 +31,24 @@ package BaseGenerator {
         }
     }
 
+    sub _rewind_all_files(@fhs) {
+        for my $fh (@fhs) {
+            File::seek($fh, 0);
+        }
+    }
+
     sub _close_all_files(@fhs) {
         for my $fh (@fhs) {
             File::close($fh);
         }
+    }
+
+    sub _is_first_file($i) {
+        return $i == 0;
+    }
+
+    sub _is_last_file($i, @fhs) {
+        return $i == @fhs - 1;
     }
 
     sub _append_byte_to_string($byte, $string) {

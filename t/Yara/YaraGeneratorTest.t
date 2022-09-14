@@ -57,7 +57,6 @@ ok(@{ $empty_signature->strings } == 0, "YaraGenerator signature->strings is emp
 
 # TEST: _should_add_string
 $sut = YaraGenerator->new(min_string_bytes => $min_string_bytes);
-ok(!$sut->_should_add_string(undef, ()),                      "YaraGenerator _should_add_string is false when string is undefined");
 ok(!$sut->_should_add_string("41", ()),                       "YaraGenerator _should_add_string is false when string is smaller than min_string_bytes");
 ok(!$sut->_should_add_string("4141", ()),                     "YaraGenerator _should_add_string is false when string is equal to min_string_bytes");
 ok(!$sut->_should_add_string("41414242", ()),                 "YaraGenerator _should_add_string is false when string is greater than min_string_bytes but not enough");

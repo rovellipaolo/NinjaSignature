@@ -12,7 +12,8 @@ NinjaSignature automatically generates simple signatures that matches multiple f
 **NOTE: This is more a playground to play with Perl than anything serious.**
 
 There are currently two supported types of signature: a (custom) simple string one and a YARA one.
-Please note that not all YARA conditions are currently supported, and they will probably never be (e.g. wild-cards, jumps of variable content and lengths, fragment alternatives and many more).
+
+Please note that YARA signature generation is not accurate at present. Furthermore, not all YARA conditions are currently supported and they will probably never be (e.g. wild-cards, jumps of variable content and lengths, fragment alternatives and many more).
 
 
 
@@ -112,6 +113,23 @@ rule TestSignature
         $s0 = {41 41 42 42}
         $s1 = {43 43 44 44 45 45 46 46}
         $s2 = {30 30 3F 3F 21 21}
+
+    condition:
+        $s0 and $s1 and $s2
+}
+```
+
+### Generate a YARA signature from multiple files
+```
+$ ninjasignature --type yara --name TestSignature --files ./t/data/sample1 ./t/data/sample2 ./t/data/sample3
+```
+```
+rule TestSignature
+{
+    strings:
+        $s0 = {41 41 42 42}
+        $s1 = {43 43 44 44 45 45}
+        $s2 = {30 30 3F 3F}
 
     condition:
         $s0 and $s1 and $s2

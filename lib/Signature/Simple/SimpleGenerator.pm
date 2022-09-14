@@ -24,6 +24,11 @@ package SimpleGenerator {
         default => 4,
     );
 
+    ##
+    # Preconditions:
+    #  - $name is always defined
+    #  - @files always contain 2 or more files
+    #
     sub generate($self, $name, @files) {
         my @hashes = $self->_generate_sha256_hashes(@files);
 
@@ -54,7 +59,9 @@ package SimpleGenerator {
         return @hashes;
     }
 
+    ##
     # Algorithm: same bytes, same offsets.
+    #
     sub _generate_byte_sequences($self, @fhs) {
         my @strings = ();
 
@@ -74,8 +81,7 @@ package SimpleGenerator {
                     last;
                 }
 
-                # First file:
-                if ($i == 0) {
+                if (BaseGenerator::_is_first_file($i)) {
                     $current_offset += 1;
                     $last_byte = $current_byte;
                     next;
@@ -91,8 +97,7 @@ package SimpleGenerator {
                     last;
                 }
 
-                # Last file:
-                if ($i == @fhs - 1) {
+                if (BaseGenerator::_is_last_file($i, @fhs)) {
                     $string = BaseGenerator::_append_byte_to_string($current_byte, $string);
                 }
             }

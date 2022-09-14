@@ -10,13 +10,13 @@ use lib './lib';
 use Signature::GeneratorFactory;
 
 sub print_help($name, $type) {
-    say(qq{usage: ninjasignature.pl [-h] [-t TYPE] [-n NAME] -f FILE1 -f FILE2
+    say(qq{usage: ninjasignature.pl [-h] [-t TYPE] [-n NAME] -f FILE1 -f FILE2 [-f FILEX]
 
 examples:
   >> ninjasignature.pl --files ./t/data/sample1 ./t/data/sample2
   >> ninjasignature.pl --type simple --files ./t/data/sample1 ./t/data/sample2
   >> ninjasignature.pl --type yara --files ./t/data/sample1 ./t/data/sample2
-  >> ninjasignature.pl --type yara --name TestSignature --files ./t/data/sample1 ./t/data/sample2
+  >> ninjasignature.pl --type yara --name TestSignature --files ./t/data/sample1 ./t/data/sample2 ./t/data/sample3
 
 optional arguments:
   -h, --help     show this help message and exit
@@ -26,7 +26,7 @@ optional arguments:
 
 sub main {
     my $help;
-    my $type = GeneratorFactory::YARA;
+    my $type = GeneratorFactory::SIMPLE;
     my $name  = "Generic";
     my @files = ();
 
@@ -47,9 +47,6 @@ sub main {
     }
     if ( @files < 2 ) {
         die "Must compare at least two files!";
-    }
-    if ( $type eq GeneratorFactory::YARA && @files != 2 ) {
-        die "Can compare only two files at a time when using 'GeneratorFactory::YARA' type!";
     }
 
     my $signature = GeneratorFactory::build($type)->generate($name, @files);

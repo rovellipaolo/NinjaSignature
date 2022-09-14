@@ -31,7 +31,17 @@ dies_ok { BaseGenerator::_open_all_files(@files) } "BaseGenerator fails to open 
 $file_mock->mock('close', sub { die "DIE TEST" });
 dies_ok { BaseGenerator::_close_all_files(@fhs) } "BaseGenerator fails to close all files correctly";
 
-# TEST: append byte to string
+# TEST: _is_first_file
+ok(BaseGenerator::_is_first_file(0), "BaseGenerator _is_first_file returns true if the index is 0");
+ok(!BaseGenerator::_is_first_file(1), "BaseGenerator _is_first_file returns false if the index is not 0");
+
+# TEST: _is_last_file
+ok(BaseGenerator::_is_last_file(0, ("FH0")), "BaseGenerator _is_last_file returns true if the index is 0 and there is only one file");
+ok(BaseGenerator::_is_last_file(1, ("FH0", "FH1")), "BaseGenerator _is_last_file returns true if the index is 1 and there are two files");
+ok(!BaseGenerator::_is_last_file(0, ("FH0", "FH1")), "BaseGenerator _is_last_file returns false if the index is 0 and there are two files");
+ok(!BaseGenerator::_is_last_file(1, ("FH0", "FH1", "FH2")), "BaseGenerator _is_last_file returns false if the index is 1 and there are three files");
+
+# TEST: _append_byte_to_string
 ok(BaseGenerator::_append_byte_to_string("A", undef) eq "41", "BaseGenerator append byte to undefined string correctly");
 ok(BaseGenerator::_append_byte_to_string("A", "") eq "41", "BaseGenerator append byte to empty string correctly");
 ok(BaseGenerator::_append_byte_to_string("B", "41") eq "41 42", "BaseGenerator append byte to non-empty, one byte string correctly");

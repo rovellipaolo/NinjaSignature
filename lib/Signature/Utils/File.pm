@@ -12,7 +12,7 @@ package File {
     use Moose;
 
     sub open ($file) {
-        open( my $fh, '<:raw', $file ) or die "Cannot open '$file' file: $!";
+        open( my $fh, '<:raw', $file ) or die("Cannot open '$file' file: $!");
         return $fh;
     }
 
@@ -34,7 +34,7 @@ package File {
 
     sub close ($fh) {
         close($fh)
-          or warn $! ? "Cannot close file: $!" : "Cannot close file: $?";
+          or warn( $! ? "Cannot close file: $!" : "Cannot close file: $?" );
     }
 }
 

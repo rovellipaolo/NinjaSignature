@@ -28,7 +28,7 @@ package GeneratorFactory {
             $generator = YaraGenerator->new( min_string_bytes => 4 );
         }
         else {
-            die "No generator matching '$type' type found!";
+            die("No generator matching '$type' type found!");
         }
         return $generator;
     }

@@ -5,12 +5,21 @@ use feature 'signatures';
 no warnings 'experimental::signatures';
 
 use Getopt::Long;
+use Log::Log4perl qw(:easy);
 
 use lib './lib';
 use Signature::GeneratorFactory;
 
+Log::Log4perl->easy_init(
+    {
+        level  => $INFO,
+        layout => "%m%n"
+    }
+);
+my $logger = Log::Log4perl->get_logger("NinjaSignature");
+
 sub print_help ( $name, $type ) {
-    say(
+    $logger->info(
 qq{usage: ninjasignature.pl [-h] [-t TYPE] [-n NAME] -f FILE1 -f FILE2 [-f FILEX]
 
 examples:
@@ -48,15 +57,16 @@ sub main {
         return 0;
     }
     if ( @files < 2 ) {
-        die "Must compare at least two files!";
+        $logger->error("Must compare at least two files!");
+        return 1;
     }
 
     my $signature = GeneratorFactory::build($type)->generate( $name, @files );
     if ( $signature->is_empty() ) {
-        say("No signature could be generated!");
+        $logger->error("No signature could be generated!");
     }
     else {
-        say( $signature->dump() );
+        $logger->info( $signature->dump() );
     }
 
     return 0;

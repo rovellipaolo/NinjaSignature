@@ -6,6 +6,7 @@ NINJASIGNATURE_HOME := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST)))
 build:
 	@cpan Digest::SHA
 	@cpan Getopt::Long
+	@cpan Log::Log4perl
 	@cpan Moose
 	@cpan Moose::Role
 

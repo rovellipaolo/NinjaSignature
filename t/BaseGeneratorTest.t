@@ -23,12 +23,12 @@ my @expected_fhs = ( 0, 0 );
 is_deeply( \@fhs, \@expected_fhs, "BaseGenerator open all files correctly" );
 
 # TEST: open fails
-$file_mock->mock( 'open', sub { die "DIE TEST"; } );
+$file_mock->mock( 'open', sub { die("DIE TEST"); } );
 dies_ok { BaseGenerator::_open_all_files(@files) }
 "BaseGenerator fails to open all files correctly";
 
 # TEST: close fails
-$file_mock->mock( 'close', sub { die "DIE TEST" } );
+$file_mock->mock( 'close', sub { die("DIE TEST") } );
 dies_ok { BaseGenerator::_close_all_files(@fhs) }
 "BaseGenerator fails to close all files correctly";
 

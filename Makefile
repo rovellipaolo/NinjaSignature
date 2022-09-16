@@ -1,3 +1,6 @@
+DOCKER_FILE :=  docker/Dockerfile
+DOCKER_IMAGE := ninjasignature
+DOCKER_TAG := latest
 NINJASIGNATURE_HOME := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 
@@ -20,6 +23,10 @@ build-dev:
 	@cpan -fi Test::MockModule
 	@cpan -fi Test::More
 
+.PHONY: build-docker
+build-docker:
+	@docker build -f ${DOCKER_FILE} -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+
 
 # Install:
 .PHONY: install
@@ -39,6 +46,10 @@ test:
 .PHONY: test-coverage
 test-coverage:
 	@cover -test
+
+.PHONY: test-docker
+test-docker:
+	@docker run --name ${DOCKER_IMAGE} --rm -w /opt/NinjaSignature -v ${NINJASIGNATURE_HOME}/t:/opt/NinjaSignature/t ${DOCKER_IMAGE}:${DOCKER_TAG} prove -r t
 
 .PHONY: checkstyle
 checkstyle:

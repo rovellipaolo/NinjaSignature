@@ -30,6 +30,10 @@ $ git clone https://github.com/rovellipaolo/NinjaSignature
 $ cd NinjaSignature
 ```
 
+
+NinjaSignature has two ways to be executed: natively in your local environment or in [Docker](https://www.docker.com/).
+
+### Native
 To execute NinjaSignature in your local machine, you need `Perl 5.30` or higher installed.
 Just launch the following commands, which will install all the needed Perl dependencies and add a `ninjasignature` symlink to `/usr/local/bin/`.
 
@@ -37,6 +41,23 @@ Just launch the following commands, which will install all the needed Perl depen
 $ make build-dev
 $ make install
 $ ninjasignature --help
+```
+
+### Docker
+To execute NinjaSignature in Docker, you need `Docker` installed.
+To build the Docker image, launch the following commands:
+
+```
+$ make build-docker
+$ docker run --name ninjasignature -it --rm ninjasignature:latest ninjasignature --help
+```
+
+Note that you need to bind the directory containing the sample files to the Docker image:
+```shell
+$ mkdir samples
+$ cp /path/to/your/first/file samples/sample1
+$ cp /path/to/your/second/file samples/sample2
+$ docker run --name ninjasignature -it --rm -v ${PWD}/samples:/samples ninjasignature:latest ninjasignature /samples/sample1 /samples/sample2
 ```
 
 

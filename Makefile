@@ -4,27 +4,27 @@ NINJASIGNATURE_HOME := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST)))
 # Build:
 .PHONY: build
 build:
-	@cpan Digest::SHA
-	@cpan Getopt::Long
-	@cpan Log::Log4perl
-	@cpan Moose
-	@cpan Moose::Role
+	@cpan -fi Digest::SHA
+	@cpan -fi Getopt::Long
+	@cpan -fi Log::Log4perl
+	@cpan -fi Moose
+	@cpan -fi Moose::Role
 
 .PHONY: build-dev
 build-dev:
 	make build
-	@cpan Devel::Cover
-	@cpan Perl::Tidy
-	@cpan Test::Exception
-	@cpan Test::MockObject
-	@cpan Test::MockModule
-	@cpan Test::More
+	@cpan -fi Devel::Cover
+	@cpan -fi Perl::Tidy
+	@cpan -fi Test::Exception
+	@cpan -fi Test::MockObject
+	@cpan -fi Test::MockModule
+	@cpan -fi Test::More
 
 
 # Install:
 .PHONY: install
 install:
-	sudo ln -s $(NINJASIGNATURE_HOME)/ninjasignature.pl /usr/local/bin/ninjasignature
+	sudo ln -s ${NINJASIGNATURE_HOME}/ninjasignature.pl /usr/local/bin/ninjasignature
 
 .PHONY: uninstall
 uninstall:

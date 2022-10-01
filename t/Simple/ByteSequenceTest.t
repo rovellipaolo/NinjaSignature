@@ -2,20 +2,27 @@
 use v5.30;
 use warnings FATAL => 'all';
 
-use Test::More;
+use Test::Spec;
 
 use lib './lib';
 use Signature::Simple::ByteSequence;
 
+describe "ByteSequence" => sub {
+    my $offset = 0;
+    my $value = "41 41 42 42";
+    my $sut = ByteSequence->new(offset => $offset, value => $value);
 
-my $offset = 0;
-my $value = "41 41 42 42";
+    it "returns correct offset" => sub {
+        ok($sut->offset == $offset);
+    };
 
-my $sut = ByteSequence->new(offset => $offset, value => $value);
+    it "returns correct value" => sub {
+        ok($sut->value eq $value);
+    };
 
-# TEST: happy case
-ok($sut->offset == $offset, "ByteSequence offset is correct");
-ok($sut->value eq $value,   "ByteSequence value is correct");
-ok($sut->length() == 11,    "ByteSequence length is correct");
+    it "returns correct length()" => sub {
+        ok($sut->length() == 11);
+    };
+};
 
-done_testing();
+runtests if !caller;

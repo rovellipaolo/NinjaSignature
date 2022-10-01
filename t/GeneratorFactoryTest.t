@@ -3,25 +3,25 @@ use v5.30;
 use warnings FATAL => 'all';
 
 use Test::Exception;
-use Test::More;
+use Test::Spec;
 
 use lib './lib';
 use Signature::GeneratorFactory;
 
-my %types = (
-    GeneratorFactory::SIMPLE => "SimpleGenerator",
-    GeneratorFactory::YARA   => "YaraGenerator"
-);
+describe "GeneratorFactory build" => sub {
+    it "creates a SimpleGenerator when type is simple" => sub {
+        my $sut = GeneratorFactory::build(GeneratorFactory::SIMPLE);
+        isa_ok($sut, "SimpleGenerator");
+    };
 
-# TEST: happy case
-for my $key ( keys %types ) {
-    my $sut = GeneratorFactory::build($key);
-    isa_ok( $sut, $types{$key},
-        "GeneratorFactory build for '$key' type is correct" );
-}
+    it "creates a YaraGenerator when type is yara" => sub {
+        my $sut = GeneratorFactory::build(GeneratorFactory::YARA);
+        isa_ok($sut, "YaraGenerator");
+    };
 
-# TEST: build fails
-dies_ok { GeneratorFactory::build("NOT_EXISTING_TYPE") }
-"GeneratorFactory build for 'NOT_EXISTING_TYPE' type fails";
+    it "fails when type does not exist" => sub {
+        dies_ok { GeneratorFactory::build("NOT_EXISTING_TYPE") };
+    };
+};
 
-done_testing();
+runtests if !caller;

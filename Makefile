@@ -21,7 +21,7 @@ build-dev:
 	@cpan -fi Test::Exception
 	@cpan -fi Test::MockObject
 	@cpan -fi Test::MockModule
-	@cpan -fi Test::More
+	@cpan -fi Test::Spec
 
 .PHONY: build-docker
 build-docker:

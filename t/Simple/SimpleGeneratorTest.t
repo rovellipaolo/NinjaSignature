@@ -4,11 +4,10 @@ use warnings FATAL => 'all';
 
 use Test::MockObject;
 use Test::MockModule;
-use Test::More;
+use Test::Spec;
 
 use lib './lib';
 use Signature::Simple::SimpleGenerator;
-
 
 # MOCK: Signature::Utils::File
 my $file_mock = Test::MockModule->new('File');
@@ -53,37 +52,72 @@ my $name = "TestSimpleSignature";
 my @files = ("./t/data/sample1", "./t/data/sample2");
 my $min_string_bytes = 4;
 
-my $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
+describe "YaraGenerator min_string_bytes" => sub {
+    my $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
 
-# TEST: min_string_bytes happy case
-ok($sut->min_string_bytes eq $min_string_bytes, "SimpleGenerator min_string_bytes is correct");
+    it "returns correct value" => sub {
+        ok($sut->min_string_bytes eq $min_string_bytes);
+    };
+};
 
-# TEST: generate happy case
-my $signature = $sut->generate($name, @files);
-my @expected_sha256 = ("AAA000", "BBB111");
-is_deeply($signature->sha256, \@expected_sha256, "SimpleGenerator signature->sha256 is correct");
-my @expected_bytes = (ByteSequence->new(offset => 0, value => "41 41 42 42"));
-is_deeply($signature->bytes, \@expected_bytes,   "SimpleGenerator signature->bytes is correct");
+describe "YaraGenerator generate(...) happy case" => sub {
+    my $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
+    my $signature = $sut->generate($name, @files);
 
-# TEST: empty file
-$file_mock->mock('read', sub { return undef; });
-$sha_mock->mock('hexdigest', sub { return "" });
-my $empty_signature = $sut->generate($name, @files);
-ok($empty_signature->is_empty(),      "SimpleGenerator signature->is_empty is true when file is empty");
-ok(@{ $empty_signature->bytes } == 0, "SimpleGenerator signature->bytes is empty when file is empty");
+    it "returns correct signature->sha256 list" => sub {
+        my @expected_sha256 = ("AAA000", "BBB111");
+        is_deeply($signature->sha256, \@expected_sha256, "SimpleGenerator signature->sha256 is correct");
+    };
 
-# TEST: match smaller than min_string_bytes
-my $big_min_string_bytes = 8;
-$sut = SimpleGenerator->new(min_string_bytes => $big_min_string_bytes);
-$signature = $sut->generate($name, @files);
-ok($empty_signature->is_empty(),      "SimpleGenerator signature->is_empty is true when min_string_bytes is bigger than match");
-ok(@{ $empty_signature->bytes } == 0, "SimpleGenerator signature->bytes is empty when min_string_bytes is bigger than match");
+    it "returns correct signature->bytes list" => sub {
+        my @expected_bytes = (ByteSequence->new(offset => 0, value => "41 41 42 42"));
+        is_deeply($signature->bytes, \@expected_bytes,   "SimpleGenerator signature->bytes is correct");
+    };
+};
 
-# TEST: _should_add_string
-$sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
-ok(!$sut->_should_add_string(0, 0),                    "SimpleGenerator _should_add_string is false when offset is smaller than min_string_bytes");
-ok($sut->_should_add_string($min_string_bytes, 0),     "SimpleGenerator _should_add_string is true when offset is equal to min_string_bytes");
-ok($sut->_should_add_string($min_string_bytes + 1, 0), "SimpleGenerator _should_add_string is true when offset is greater than min_string_bytes");
+describe "YaraGenerator generate(...) with match smaller than min_string_bytes" => sub {
+    my $big_min_string_bytes = 8;
+    my $sut = SimpleGenerator->new(min_string_bytes => $big_min_string_bytes);
+    my $empty_signature = $sut->generate($name, @files);
 
-done_testing();
+    it "returns signature->is_empty() true when min_string_bytes is bigger than match" => sub {
+        ok($empty_signature->is_empty());
+    };
 
+    it "returns empty signature->bytes list when min_string_bytes is bigger than match" => sub {
+        ok(@{ $empty_signature->bytes } == 0);
+    };
+};
+
+describe "YaraGenerator generate(...) with empty signature" => sub {
+    $file_mock->mock('read', sub { return undef; });
+    $sha_mock->mock('hexdigest', sub { return "" });
+    my $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
+    my $empty_signature = $sut->generate($name, @files);
+
+    it "returns signature->is_empty() true when file is empty" => sub {
+        ok($empty_signature->is_empty());
+    };
+
+    it "returns empty signature->bytes when file is empty" => sub {
+        ok(@{ $empty_signature->bytes } == 0);
+    };
+};
+
+describe "YaraGenerator _should_add_string(...)" => sub {
+    my $sut = SimpleGenerator->new(min_string_bytes => $min_string_bytes);
+
+    it "returns false when offset is smaller than min_string_bytes" => sub {
+        ok(!$sut->_should_add_string(0, 0));
+    };
+
+    it "returns true when offset is equal to min_string_bytes" => sub {
+        ok($sut->_should_add_string($min_string_bytes, 0));
+    };
+
+    it "returns true when offset is greater than min_string_bytes" => sub {
+        ok($sut->_should_add_string($min_string_bytes + 1, 0));
+    };
+};
+
+runtests if !caller;

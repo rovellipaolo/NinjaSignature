@@ -7,21 +7,21 @@ NINJASIGNATURE_HOME := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST)))
 # Build:
 .PHONY: build
 build:
-	@cpan -fi Digest::SHA
-	@cpan -fi Getopt::Long
-	@cpan -fi Log::Log4perl
-	@cpan -fi Moose
-	@cpan -fi Moose::Role
+	@cpan -Ti Digest::SHA
+	@cpan -Ti Getopt::Long
+	@cpan -Ti Log::Log4perl
+	@cpan -Ti Moose
+	@cpan -Ti Moose::Role
 
 .PHONY: build-dev
 build-dev:
 	make build
-	@cpan -fi Devel::Cover
-	@cpan -fi Perl::Tidy
-	@cpan -fi Test::Exception
-	@cpan -fi Test::MockObject
-	@cpan -fi Test::MockModule
-	@cpan -fi Test::Spec
+	@cpan -Ti Devel::Cover
+	@cpan -Ti Perl::Tidy
+	@cpan -Ti Test::Exception
+	@cpan -Ti Test::MockObject
+	@cpan -Ti Test::MockModule
+	@cpan -Ti Test::Spec
 
 .PHONY: build-docker
 build-docker:
@@ -45,7 +45,7 @@ test:
 
 .PHONY: test-coverage
 test-coverage:
-	@cover -test
+	@cover -test -ignore_re '^t/.*'
 
 .PHONY: test-docker
 test-docker:

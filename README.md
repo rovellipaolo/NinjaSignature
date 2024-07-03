@@ -23,7 +23,7 @@ Please note that YARA signature generation is slow and not accurate at present. 
 
 
 
-## Installation
+## Build
 
 The first step is cloning the NinjaSignature repository, or downloading its source code.
 
@@ -64,23 +64,13 @@ $ docker run --name ninjasignature -it --rm -v ${PWD}/samples:/samples ninjasign
 
 
 
-## Checkstyle
+## Test
 
-Once you've configured it (see the _"Installation"_ section), you can also run NinjaSignature checkstyle as follows.
-
-```
-$ make checkstyle
-```
-**NOTE:** This is using [`perltidy`](https://metacpan.org/dist/Perl-Tidy/view/bin/perltidy) under-the-hood.
-
-
-
-## Tests
-
-Once you've configured it (see the _"Installation"_ section), you can also run NinjaSignature tests as follows.
+Once you've configured it (see the _"Installation"_ section), you can also run the tests and checkstyle as follows.
 
 ```
 $ make test
+$ make checkstyle
 ```
 
 You can also run the tests with coverage by launching the following command:
@@ -221,3 +211,9 @@ rule Trojan://Android/Zitmo.A
         $s0 and $s1 and $s2 and $s3 and $s4 and $s5 and $s6 and $s7
 }
 ```
+
+
+
+## Licence
+
+NinjaSignature is licensed under the GNU General Public License v3.0 (http://www.gnu.org/licenses/gpl-3.0.html).

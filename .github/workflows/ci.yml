@@ -17,16 +17,18 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: "5.34"
-      - name: Install
+      - name: Build
         run: |
           make build-dev
           cpan Devel::Cover::Report::Coveralls
       - name: Checkstyle
         run: |
           make checkstyle
-      - name: Tests
+      - name: Test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cover -test -report coveralls
+      - name: Show coverage report in GitHub Actions summary
+        run: |
           echo "$(cover -summary -silent)" >> $GITHUB_STEP_SUMMARY
